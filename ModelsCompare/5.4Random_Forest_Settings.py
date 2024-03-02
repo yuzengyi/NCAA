@@ -14,8 +14,8 @@ X = df[categorical_columns + continuous_columns]
 y = df['y']
 
 # 数据集划分
-X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=(2/9), random_state=42)
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, stratify=y,random_state=42)
+X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=(2/3), stratify=y_temp,random_state=42)
 
 # 参数网格
 param_grid = {
@@ -30,7 +30,7 @@ param_grid = {
 rfc = RandomForestClassifier(random_state=42)
 
 # 使用GridSearchCV进行超参数优化
-grid_search = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=3, n_jobs=-1, verbose=2, scoring='accuracy')
+grid_search = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2, scoring='accuracy')
 grid_search.fit(X_train, y_train)
 
 # 输出最佳参数

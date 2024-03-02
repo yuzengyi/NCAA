@@ -1,7 +1,9 @@
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score
+
 
 # 读取数据
 df = pd.read_excel('data\\enhanced_data.xlsx')
@@ -14,8 +16,8 @@ X = df[categorical_columns + continuous_columns]
 y = df['y']
 
 # 数据集划分
-X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=(2/9), random_state=42)
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3,stratify=y, random_state=42)
+X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=(2/3),stratify=y_temp, random_state=42)
 
 # 定义参数网格
 param_grid = {
@@ -31,7 +33,7 @@ param_grid = {
 xgb = XGBClassifier(n_estimators=100)
 
 # 使用GridSearchCV进行参数调优
-grid_search = GridSearchCV(estimator=xgb, param_grid=param_grid, cv=3, n_jobs=-1, verbose=2, scoring='accuracy')
+grid_search = GridSearchCV(estimator=xgb, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2, scoring='accuracy')
 grid_search.fit(X_train, y_train)
 
 # 打印最佳参数

@@ -16,9 +16,10 @@ continuous_columns = ['GrossProfit', 'NetProfit', 'REC', 'Growth', 'NetProfitGro
 X = df[categorical_columns + continuous_columns]  # 选择适合的特征进行示例
 y = df['y']
 
+# 假设X和y已经被定义，并且y中包含的是0和1的标签，比例为3比1
 # 数据集划分
-X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
-X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=(2/3), random_state=42)
+X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=42)
+X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, test_size=2/3, stratify=y_test, random_state=42)
 
 # 数据标准化
 scaler = StandardScaler()

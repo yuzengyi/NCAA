@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -13,9 +14,24 @@ continuous_columns = ['GrossProfit', 'NetProfit', 'REC', 'Growth', 'NetProfitGro
 X = df[categorical_columns + continuous_columns]
 y = df['y']
 
+# 假设X和y已经被定义，并且y中包含的是0和1的标签，比例为3比1
 # 数据集划分
-X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, test_size=2/3, random_state=42)
+X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=42)
+X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, test_size=2/3, stratify=y_test, random_state=42)
+
+# 定义一个函数来计算并打印比例
+def print_class_ratios(y, dataset_name):
+    class_counts = dict(zip(*np.unique(y, return_counts=True)))
+    total = sum(class_counts.values())
+    print(f"{dataset_name} - Class Ratios:")
+    for label, count in class_counts.items():
+        print(f"Class {label}: {count/total:.2f}")
+
+# 打印每个数据集中的类别比例
+print_class_ratios(y_train_val, "Training Set")
+print_class_ratios(y_val, "Validation Set")
+print_class_ratios(y_test, "Test Set")
+
 
 # 数据标准化处理
 scaler = StandardScaler()
